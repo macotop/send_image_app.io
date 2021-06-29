@@ -1,0 +1,20 @@
+{% extends 'send_image_app/base.html' %}
+{% block content %}
+<div class="container" style="margin: 20px 0px; color: #0cb422;">
+    <h4 class="label">
+        <p>アニマル画像判定アプリ</p>
+    </h4>
+    <hr>
+    <p style="margin: 50px 20px 0px 0px; color: black;">画像ファイルを選択して推定ボタンをクリックしてください。</p>
+</div>
+<div class="container" style="margin: 20px 0px;">
+    <!--enctype="multipart/form-data" : アップロードした画像のエンコードフォーマットを指定している-->
+    <form action="" method="POST", class='form' enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type='submit' class="btn btn-success" id="inference" style="margin-top: 20px;">
+            推定する
+        </button>
+    </form>
+</div>
+{% endblock %}

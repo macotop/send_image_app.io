@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>{% block title %}アニマル図鑑{% endblock %}</title>
+</head>
+<body>
+    <!--ナビバーの設置-->
+    <nav class="navbar navbar-light" style="background-color: #10b2befa; padding: 0px;">
+        <span class="navbar-brand mb-0 h1" style="color: white; margin-left: 10px; font-size: 20pt;">アニマル図鑑
+            <p style="color: white; text-align: left; margin-bottom: 0px; font-size: 10pt;">ゾウ、ライオン、ホッキョクグマ、シマウマ</p>
+        </span>
+        {% if user.is_authenticated %}
+        <span style="font-size: 15px; text-align: right; margin-right: 10px;">
+            <a id="logout" href="{% url 'logout' %}" style="color: white; text-decoration: underline;">
+                こんにちは、{{ user.username }}さん
+            </a>
+        </span>
+        {% endif %}
+    </nav>
+    <div class="contents" style="margin-top: 0 20px;">
+        {% block content %}
+    
+        {% endblock %}
+    </div>
+</body>
+</html>

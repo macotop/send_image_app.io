@@ -1,0 +1,43 @@
+{% extends 'send_image_app/base.html' %}
+
+{% block content %}
+<div class="container" style="margin: 20px 0px; color: #0cb422;">
+    <h4 class="label">
+        <p>アニマル推定結果：{{ animal_name }}</p>
+    </h4>
+</div>
+<div class="container" style="margin: 20px 0px;">
+    <h4 class="proba">
+        <p>信頼度：{{ y_proba }}</p>
+    </h4>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>項目</th>
+            <th>結果</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>画像ファイル</td>
+            <td>
+                <!--指定した画像のurl-->
+                <img class="prob_img" src="{{ image_url }}" alt="">
+            </td>
+        </tr>
+        <tr>
+            <td>アニマル豆知識</td>
+            <td>
+                <p>{{ information }}</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<div class="container" style="margin: 20px 0px;">
+    <a href=""><button type="button" class="btn btn-success" style="margin-top: 20px;">画像選択メニューに戻る</button></a>
+</div>
+{% endblock %}
