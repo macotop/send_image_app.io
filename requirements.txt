@@ -39,7 +39,9 @@ six==1.16.0
 sqlparse==0.4.1
 tensorboard==2.4.1
 tensorboard-plugin-wit==1.8.0
-torch==1.9.0
+-- torch==1.9.0
+--find-links https://download.pytorch.org/whl/torch_stable.html
+torch==1.9.0+cpu
 torchmetrics==0.3.2
 torchvision==0.10.0
 tqdm==4.61.1
