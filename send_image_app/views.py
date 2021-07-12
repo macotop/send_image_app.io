@@ -85,7 +85,7 @@ def inference(request, newest_file_path):
         information = "シマウマは「モー」と鳴きます。牛の鳴き声に非常に近い声を発します。"
 
     # DB内の最新のデータ
-    modelfile = ModelFile.objects.order_by('animal_id').reverse()[0]
+    modelfile = ModelFile.objects.order_by('id').reverse()[0]
     modelfile.proba = np.array(y_proba.max()*100)
     modelfile.result = y
     modelfile.animal_name = animal_name
