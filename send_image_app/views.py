@@ -1,24 +1,28 @@
 import sys, os
 sys.path.append('../')
 import model
+sys.path.append('../')
+from model import animalmodel
+from pathlib import Path
+from glob import glob
 
 from django.shortcuts import render, redirect
 from .forms import ImageForm, LoginForm, SignUpForm
-from .models import ModelFile
+from .models import ModelFile, _user_profile_avator_upload_to
 
-# import torch
-# import torchvision
+import torch
+import torchvision
 import numpy as np
 from torchvision import transforms
 from torchvision import datasets
 from PIL import Image
 
 # animal_modelの中身
-import torch
-import torch.nn as nn
-import pytorch_lightning as pl
-import torchvision
-from torchvision.models import resnet18
+# import torch
+# import torch.nn as nn
+# import pytorch_lightning as pl
+# import torchvision
+# from torchvision.models import resnet18
 
 # django.contrib.auth.views: ユーザ認証に関するモジュールが定義
 from django.contrib.auth.views import LoginView, LogoutView
@@ -36,20 +40,22 @@ def classify(request):
         # 検証結果問題なければ保存
         if form.is_valid():
             form.save()
-            # 取得した画像のパスを受け渡す
-            # DB上のカラム名を指定して、画像の名前を取得
-            image_name = request.FILES['image']
-            # 画像までのパスを取得
-            image_url = '../media/documents/{}'.format(image_name)
-            # パスをimage_urlで渡している
-            # render(request, 'send_image_app/classify.html', {'image_url':image_url})
-            return inference(request, image_url)
+            # ファイル名のハッシュ化
+            # 画像の保存されるディレクトリを指定
+            path = Path("media/documents")
+            # 指定したディレクトリ直下の全てのファイルを取ってくる
+            all_files = list(path.glob("*"))
+            # 全てのファイルパスに対して、更新時刻を付加
+            file_updates = {file_path: os.stat(file_path).st_mtime for file_path in all_files}
+            # 更新時刻が最も新しいファイルを格納
+            newest_file_path = max(file_updates, key=file_updates.get)
+            return inference(request, newest_file_path)
     else:
         # 画像がPOSTで送信されていない場合
         form = ImageForm()
         return render(request, 'send_image_app/index.html', {'form':form})
 
-def inference(request, image_url):
+def inference(request, newest_file_path):
     # データ変換用変数定義
     transform = transforms.Compose([
     transforms.Resize((256, 256)),
@@ -58,11 +64,11 @@ def inference(request, image_url):
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
     # データ前処理
-    image_data = transform(Image.open('media/documents/{}'.format(request.FILES['image']))).unsqueeze(0)
+    image_data = transform(Image.open(newest_file_path)).unsqueeze(0)
 
     # インスタンス化
-    net = Net().eval()
-    # 重みの読み込み
+    net = model.animalmodel.Net().eval()
+    # 学習済みモデルの重みの読み込み
     net.load_state_dict(torch.load('model/animal.pt'))
 
     # 推測
@@ -86,7 +92,7 @@ def inference(request, image_url):
         information = "シマウマは「モー」と鳴きます。牛の鳴き声に非常に近い声を発します。"
 
     # DB内の最新のデータ
-    modelfile = ModelFile.objects.order_by('id').reverse()[0]
+    modelfile = ModelFile.objects.order_by('animal_id').reverse()[0]
     modelfile.proba = np.array(y_proba.max()*100)
     modelfile.result = y
     modelfile.animal_name = animal_name
@@ -94,23 +100,23 @@ def inference(request, image_url):
     modelfile.save()
 
     return render(request, 'send_image_app/classify.html', {
-        'image_url':image_url, 'y':np.array(y[0]), 
+        'newest_file_path':newest_file_path, 'y':np.array(y[0]), 
         'y_proba':np.array(y_proba.max()*100), 'information':information,
         'animal_name':animal_name
         })
 
 # ネットワークの構築
-class Net(pl.LightningModule):
-    def __init__(self):
-        super().__init__()
+# class Net(pl.LightningModule):
+#     def __init__(self):
+#         super().__init__()
 
-        self.feature = resnet18(pretrained=True)
-        self.fc = nn.Linear(1000, 4)
+#         self.feature = resnet18(pretrained=True)
+#         self.fc = nn.Linear(1000, 4)
 
-    def forward(self, x):
-        h = self.feature(x)
-        h = self.fc(h)
-        return h
+#     def forward(self, x):
+#         h = self.feature(x)
+#         h = self.fc(h)
+#         return h
 
 class Login(LoginView):
     form_class = LoginForm

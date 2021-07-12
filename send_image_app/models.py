@@ -1,13 +1,33 @@
+import os
+import hashlib
 from django.db import models
-from datetime import date
+from datetime import date, datetime
+
+# ファイル名のハッシュ化
+def _user_profile_avator_upload_to(instance, filename):
+    current_time = datetime.now()
+    # ファイル毎に固有のパーツを結合
+    pre_hash_name = '%s%s%s' % (instance.animal_id, filename, current_time)
+    # ファイル形式を抽出
+    extension = str(filename).split('.')[-1]
+    # hashlib.md5 : 与えられた値に対して適当な値を返す関数、.hexdigest() : 長さ32の文字列
+    hs_filename = '%s.%s' % (hashlib.md5(pre_hash_name.encode()).hexdigest(), extension)
+    # hash_file_name(hs_filename)
+    # 保存先
+    saved_path = 'documents/'
+    return '%s%s' % (saved_path, hs_filename)
 
 # DBのテーブルを定義
 class ModelFile(models.Model):
     # ImageField : 画像のアップロードのみに使用されるフィールド
     # upload_to : 保存先を指定する
-    image = models.ImageField(upload_to = 'documents/')
+    image = models.ImageField(
+        # 以下だとファイル名をそのまま格納することになる
+        # upload_to = 'documents/'
+        upload_to = _user_profile_avator_upload_to
+        )
 
-    id = models.AutoField(primary_key=True)
+    animal_id = models.AutoField(primary_key=True)
     
     # 予測結果
     result = models.IntegerField(blank=True, null=True)
@@ -27,7 +47,7 @@ class ModelFile(models.Model):
         if self.proba == 0.0:
             # strftime : int型をstr型にしてフォーマットを整える。
             # 登録日、idのみ表示
-            return '%s, %d' % (self.registered_date.strftime('%Y-%m-%d'), self.id)
+            return '%s, %d' % (self.registered_date.strftime('%Y-%m-%d'), self.animal_id)
         else:
             # 登録日、id、予測結果、動物名、信頼度を表示
-            return '%s, %d, %d, %s, %d' % (self.registered_date.strftime('%Y-%m-%d'), self.id, self.result, self.animal_name, self.proba)
+            return '%s, %d, %d, %s, %d' % (self.registered_date.strftime('%Y-%m-%d'), self.animal_id, self.result, self.animal_name, self.proba)

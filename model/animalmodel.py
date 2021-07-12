@@ -1,4 +1,4 @@
-from . import animal
+# from . import animal
 
 import torch
 import torch.nn as nn
@@ -20,7 +20,7 @@ class Net(pl.LightningModule):
         return h
 
 # インスタンス化
-net = Net().eval()
+# net = Net().eval()
 
 # 重みの読み込み
-net.load_state_dict(torch.load('animal.pt'))
+# net.load_state_dict(torch.load('animal.pt'))

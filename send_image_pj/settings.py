@@ -141,5 +141,5 @@ LOGOUT_URL = 'logout'
 LOGOUT_REDIRECT_URL = 'login'
 
 # 開発用サーバを立ち上げる時は以下はコメントアウトする
-import django_heroku
-django_heroku.settings(locals())
+# import django_heroku
+# django_heroku.settings(locals())
