@@ -17,13 +17,6 @@ from torchvision import transforms
 from torchvision import datasets
 from PIL import Image
 
-# animal_modelの中身
-# import torch
-# import torch.nn as nn
-# import pytorch_lightning as pl
-# import torchvision
-# from torchvision.models import resnet18
-
 # django.contrib.auth.views: ユーザ認証に関するモジュールが定義
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
@@ -104,19 +97,6 @@ def inference(request, newest_file_path):
         'y_proba':np.array(y_proba.max()*100), 'information':information,
         'animal_name':animal_name
         })
-
-# ネットワークの構築
-# class Net(pl.LightningModule):
-#     def __init__(self):
-#         super().__init__()
-
-#         self.feature = resnet18(pretrained=True)
-#         self.fc = nn.Linear(1000, 4)
-
-#     def forward(self, x):
-#         h = self.feature(x)
-#         h = self.fc(h)
-#         return h
 
 class Login(LoginView):
     form_class = LoginForm

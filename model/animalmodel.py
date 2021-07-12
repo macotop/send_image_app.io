@@ -1,5 +1,3 @@
-# from . import animal
-
 import torch
 import torch.nn as nn
 import pytorch_lightning as pl
@@ -19,8 +17,3 @@ class Net(pl.LightningModule):
         h = self.fc(h)
         return h
 
-# インスタンス化
-# net = Net().eval()
-
-# 重みの読み込み
-# net.load_state_dict(torch.load('animal.pt'))
